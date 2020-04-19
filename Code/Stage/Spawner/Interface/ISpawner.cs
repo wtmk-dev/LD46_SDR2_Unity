@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu]
-public class State : ScriptableObject
+public interface ISpawner
 {
+    void Allocate(int amount);
+    void Spawn();
 }

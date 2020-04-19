@@ -7,6 +7,7 @@ using DG.Tweening;
 
 public class InitState : IState
 {
+    public Action<State> OnStateChange;
     private State state;
     private Image camera;
     private System.Random rand;
@@ -27,12 +28,20 @@ public class InitState : IState
 
     public void OnStateUpdate()
     {
-
+        Debug.Log("OnStateUpdate: " + state);
     }
 
     public void OnStateExit()
     {
+        Debug.Log("OnStateExit: " + state);
+    }
 
+    public void StateChange()
+    {
+        if (OnStateChange != null)
+        {
+            OnStateChange(state.NextState);
+        }
     }
 
     private void GlowScreen()

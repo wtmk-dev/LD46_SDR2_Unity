@@ -7,25 +7,47 @@ using DG.Tweening;
 
 public class Main : MonoBehaviour
 {
-    public Action<State> OnStateChange;
-
     [SerializeField]
     private Image titleScreen, background;
     [SerializeField]
     private Button startButton;
     [SerializeField]
-    private State init, start;
+    private State init, start, stage;
     private State currentState;
     private State previousState;
+    [SerializeField]
+    private Player player;
+    [SerializeField]
+    private GameObject title, stagePrefab, stageUI, board;
+    private Stage stageController;
+    private StageView stageView;
+    private Board boardController;
 
     private Dictionary<State, IState> stateHandeler;
 
-    private void Awake()
+    void OnDisable()
     {
+        UnregisterStateHandeler();
+    }
+
+    void Awake()
+    {
+        //allocate & fetch
         DOTween.Init(true,true).SetCapacity(200, 10);
+
+        GameObject stageClone = Instantiate(stagePrefab);
+        stageController = stageClone.GetComponent<Stage>();
+        stageView = stageUI.GetComponent<StageView>();
+        stageView.Init();
+
+        boardController = board.GetComponent<Board>();
+        boardController.Init();
+
         startButton.onClick.AddListener(StartGame);
 
+        //Init
         InitStateHandeler();
+        RegisterStateHandeler();
     }
 
     void Update()
@@ -37,6 +59,9 @@ public class Main : MonoBehaviour
     private void StartGame()
     {
         titleScreen.DOFade(0, 3f);
+        startButton.image.DOFade(0, 7f);
+        title.SetActive(false);
+        currentState.StateChange();
     }
 
     private void InitStateHandeler()
@@ -45,8 +70,38 @@ public class Main : MonoBehaviour
         stateHandeler = new Dictionary<State, IState>();
 
         stateHandeler.Add(init, new InitState(init, background) );
-        stateHandeler.Add(start, new StartState(start) );
+        stateHandeler.Add(start, new StartState(start,player,startButton) );
+        stateHandeler.Add(stage, new StageState(stage, player, stageController, stageView));
 
         stateHandeler[currentState].OnStateEnter();
+    }
+
+    private void RegisterStateHandeler()
+    {
+        foreach(KeyValuePair<State,IState> state in stateHandeler)
+        {
+            state.Key.OnStateChange += OnStateChange;
+        }
+    }
+
+    private void UnregisterStateHandeler()
+    {
+        foreach (KeyValuePair<State, IState> state in stateHandeler)
+        {
+            state.Key.OnStateChange -= OnStateChange;
+        }
+    }
+
+    private void OnStateChange(State state)
+    {
+        //Rework.. OnStateExit to retrun bool then check for compleation to move thought states
+        stateHandeler[currentState].OnStateExit();
+
+        previousState = currentState;
+
+        //Rework.. same
+        stateHandeler[currentState.NextState].OnStateEnter();
+
+        currentState = previousState.NextState; 
     }
 }
