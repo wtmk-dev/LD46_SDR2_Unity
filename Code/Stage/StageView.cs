@@ -43,7 +43,6 @@ public class StageView : MonoBehaviour
 
     public void SetHopeMeterActive()
     {
-        Debug.Log("active");
         hopeMeter.SetActive(true);
         hopeText.SetActive(true);
         hopeMeterImage.DOFade(1, 3f);

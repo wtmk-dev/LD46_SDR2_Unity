@@ -130,7 +130,7 @@ public class StageState : IState
 
     private void GameOver()
     {
-        Debug.Log(player.Despair);
+        //Debug.Log(player.Despair);
 
         if(player.Despair >= 4.5f)
         {
