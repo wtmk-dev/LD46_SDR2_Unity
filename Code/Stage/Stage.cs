@@ -13,6 +13,11 @@ public class Stage : MonoBehaviour
     private BadsSpawner badsSpawner;
     private MobSpawner mobSpawner;
     private StageView view;
+    private PlayerController playerController;
+    [SerializeField]
+    private SpellModel spellModel;
+    [SerializeField]
+    private Bark bark;
 
     private float spawnTime = 10f;
     private bool isSpawning = false;
@@ -25,6 +30,8 @@ public class Stage : MonoBehaviour
     private float badsTime = 2f;
     private bool isbadsTimeRunning = false;
     private IEnumerator badsTimer;
+
+    private bool isStoryMode = false;
 
     void Awake()
     {
@@ -43,6 +50,7 @@ public class Stage : MonoBehaviour
         if (goPlayer == null)
         {
             goPlayer = Instantiate(player.Prefab);
+            playerController = goPlayer.GetComponent<PlayerController>();
         }
 
         return goPlayer;
@@ -72,7 +80,7 @@ public class Stage : MonoBehaviour
             StopCoroutine(spawnTimer);
         }
 
-        spawnTimer = SpawnTimer(player.GetSpawnTime());
+        spawnTimer = SpawnTimer();
         isSpawning = true;
 
         StartCoroutine(spawnTimer);
@@ -85,18 +93,39 @@ public class Stage : MonoBehaviour
             StopCoroutine(badsTimer);
         }
 
-        badsTimer = BadsTimer(player.GetBadsSpawnTimer());
+        badsTimer = BadsTimer();
         isbadsTimeRunning = true;
 
         StartCoroutine(badsTimer);
     }
 
-    private IEnumerator SpawnTimer(float time)
+    public void Reset()
     {
+        StopAllCoroutines();
+    }
+
+    private IEnumerator SpawnTimer()
+    {
+        float time = 6f;
+        float maxTime = 6f;
         while (isSpawning)
         {
             yield return new WaitForSeconds(time);
-            mobSpawner.Spawn();
+
+            view.SetNarratorText( bark.GetRandomBark() );
+            time -= 0.3f;
+            if(time < .7f && !isStoryMode)
+            {
+                time = maxTime;
+                player.Level++;
+                if(player.Level > 5)
+                {
+                    player.Level = 5;
+                }
+                view.SetNarratorText("<fade> Level UP: ... " + player.Level);
+                spellModel.damage = player.Level;
+            }
+            mobSpawner.Spawn(player.Level);
         }
     }
 
@@ -106,14 +135,61 @@ public class Stage : MonoBehaviour
         view.SetNarratorText("");
         StartSpawning();
         SpawnBads();
+        MoveDesiparMete(player.Despair, 2.7f);
+        view.SetSpellSlotActive();
+        playerController.canCast = true;
     }
 
-    private IEnumerator BadsTimer(float time)
+    private IEnumerator BadsTimer()
     {
+        float time = 3f;
         while (isbadsTimeRunning)
         {
             yield return new WaitForSeconds(time);
-            badsSpawner.Spawn();
+            time -= 0.03f;
+            if(time < 1.3f)
+            {
+                time = 1.3f;
+            }
+            
+            UpdateDespair();
+            MoveDesiparMete(player.Despair, .3f);
+            badsSpawner.Spawn(3); 
         }
     }
+
+    private void UpdateDespair()
+    {
+        if (player.Hope > 100)
+        {
+            player.Despair += 0.03f;
+        }
+
+        if (player.Hope > 200)
+        {
+            player.Despair += 0.03f;
+        }
+
+        if (player.Hope > 300)
+        {
+            player.Despair += 0.05f;
+        }
+
+        if (player.Hope < 100)
+        {
+            player.Despair -= 0.03f;
+        }
+
+        if (player.Hope < 50)
+        {
+            player.Despair -= 0.02f;
+        }
+
+        if (player.Hope < 25)
+        {
+            player.Despair -= 0.01f;
+        }
+    }
+
+    
 }

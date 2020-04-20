@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2986ad0f5dc51a146990d62c2ee36c3e, type: 3}
+  m_Name: LevelBarks
+  m_EditorClassIdentifier: 
+  barks:
+  - <shake>...
+  - <fade><3 u
+  - <fade>5 ever
+  - <shake>RUN
+  - <incr>why do you do this to yourself
+  - <fade>you can do it
+  - <fade>u r s p i c e l
+  - <fade>right?
+  - <rot>i know
+  - <fade>the lonely rode it took
+  - <shake>!!!
+  - <fade>to get there
+  - <fade>i blieave in you
+  - <shake>DONT STOP
+  - <incr>it doent have to be this way
+  - <fade>a time of silance
+  - <fade>heart of the cards... (* > *)
+  - <shake>(*^*)

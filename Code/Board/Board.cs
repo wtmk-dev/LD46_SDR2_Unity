@@ -22,7 +22,7 @@ public class Board : MonoBehaviour
                 Vector2 pos = new Vector2(x, y);
                 Tile tile = clone.GetComponent<Tile>();
                 clone.transform.position = pos;
-                gameObject.transform.SetParent(clone.transform, gameObject.transform);
+                clone.transform.SetParent(gameObject.transform);
                 board.Add(pos, tile);
             }
         }

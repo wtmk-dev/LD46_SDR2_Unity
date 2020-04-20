@@ -14,6 +14,8 @@ public class Player : ScriptableObject
 
     public Vector2 startingPos;
 
+    public bool isWinner = false;
+
     
     public void InitNewGame()
     {
@@ -21,7 +23,8 @@ public class Player : ScriptableObject
         Despair = 0;
         Hope = 27;
         Level = 1;
-        startingPos = new Vector2(0.5f, -3.2f);
+        startingPos = new Vector2(0.5f, -3.5f);
+        isWinner = false;
     }
 
     public float GetSpawnTime()
@@ -45,5 +48,10 @@ public class Player : ScriptableObject
         {
             return 2.1f;
         } else { return 5f; }
+    }
+
+    public float GetFade()
+    {
+        return Hope / 1000;
     }
 }

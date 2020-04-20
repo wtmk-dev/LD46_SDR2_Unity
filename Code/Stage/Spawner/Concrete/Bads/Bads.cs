@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Animations;
 
 public class Bads : MonoBehaviour
 {
@@ -12,7 +13,12 @@ public class Bads : MonoBehaviour
     private Sprite sprite;
     private SpriteRenderer spriteRenderer;
 
-    public void Init()
+    private BadsSpawner spawner;
+    private BadsModel model;
+
+    private Animator anim;
+
+    public void Init(BadsModel model, BadsSpawner spawner)
     {
         if(random == null)
         {
@@ -20,6 +26,10 @@ public class Bads : MonoBehaviour
         }
 
         spriteRenderer = GetComponent<SpriteRenderer>();
+        this.spawner = spawner;
+        this.model = model;
+
+        anim = GetComponent<Animator>();
     }
 
     public void SetActive()
@@ -30,6 +40,8 @@ public class Bads : MonoBehaviour
 
     private void OnMouseDown()
     {
-        Debug.Log("I was clicked");
+        model.Score();
+        anim.SetBool("IsDead", true);
+        spawner.Kill(gameObject);
     }
 }

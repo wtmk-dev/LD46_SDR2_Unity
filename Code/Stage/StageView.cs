@@ -9,7 +9,10 @@ public class StageView : MonoBehaviour
 {
     [SerializeField]
     private GameObject hopeMeter, hopeText, spellSlot, hud, narrator, scoreText;
+    [SerializeField]
+    private List<GameObject> spellSlots;
     private Image hopeMeterImage, spellSlotImage, hudImage;
+    private List<Image> spellSlotImages;
     [SerializeField]
     private TextAnimatorPlayer hopeTextAnim, narratorTextAnim, scoreTextAnim;
 
@@ -17,6 +20,15 @@ public class StageView : MonoBehaviour
 
     public void Init()
     {
+        spellSlotImages = new List<Image>();
+
+        foreach(GameObject spells in spellSlots)
+        {
+            Image img = spells.GetComponent<Image>();
+            spellSlotImages.Add(img);
+            spells.SetActive(false);
+        }
+
         hopeMeterImage = hopeMeter.GetComponent<Image>();
         spellSlotImage = spellSlot.GetComponent<Image>();
         hudImage = hud.GetComponent<Image>();
@@ -31,6 +43,7 @@ public class StageView : MonoBehaviour
 
     public void SetHopeMeterActive()
     {
+        Debug.Log("active");
         hopeMeter.SetActive(true);
         hopeText.SetActive(true);
         hopeMeterImage.DOFade(1, 3f);
@@ -38,8 +51,25 @@ public class StageView : MonoBehaviour
 
     public void SetSpellSlotActive()
     {
-        spellSlot.SetActive(true);
-        spellSlotImage.DOFade(1, 5f);
+        foreach (GameObject spells in spellSlots)
+        {
+            spells.SetActive(true);
+            Image img = spells.GetComponent<Image>();
+            img.DOFade(1, 5f);
+        }
+    }
+
+    public void Hide()
+    {
+        foreach (GameObject spells in spellSlots)
+        {
+            spells.SetActive(false);
+            Image img = spells.GetComponent<Image>();
+            img.DOFade(0, .3f);
+        }
+
+        hopeMeter.SetActive(false);
+        hopeText.SetActive(false);
     }
 
     public void SetHudActive()

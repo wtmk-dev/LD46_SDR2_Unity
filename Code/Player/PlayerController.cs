@@ -1,18 +1,35 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    [SerializeField]
+    private List<GameObject> spellSpawnPoints;
+    private SpellSpawner spellSpawner;
+    private Player player;
+
+    public bool canCast = false;
+
+    public void Init(Player player)
     {
-        
+        this.player = player;
+        spellSpawner = GetComponent<SpellSpawner>();
+        spellSpawner.Allocate(500, spellSpawnPoints);
     }
 
-    // Update is called once per frame
-    void Update()
+    public void Fire(int loc)
     {
-        
+        if(canCast)
+        {
+            if(player.Hope <= 0)
+            {
+                return;
+            }
+
+            player.Hope -= 1;
+            spellSpawner.Spawn(loc);
+        }
     }
 }
