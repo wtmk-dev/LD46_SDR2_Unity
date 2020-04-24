@@ -8,6 +8,7 @@ public class State : ScriptableObject
 {
     public Action<State> OnStateChange;
     public State NextState;
+    public String ID;
 
     public void StateChange()
     {

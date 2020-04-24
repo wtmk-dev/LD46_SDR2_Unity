@@ -9,8 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1e2a978598fea7d43a98308cde8bb40e, type: 3}
-  m_Name: Start
+  m_Script: {fileID: 11500000, guid: e2d38d50ab0365e4db6c307de24caf49, type: 3}
+  m_Name: StartScreenTL
   m_EditorClassIdentifier: 
-  NextState: {fileID: 11400000, guid: 9df9a1069a705334081fdae106e50002, type: 2}
-  ID: Start
+  audioClips:
+  - {fileID: 8300000, guid: aefbb81bab64eca46914925414098432, type: 3}

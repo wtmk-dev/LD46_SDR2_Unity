@@ -23,7 +23,7 @@ public class InitState : IState
     public void OnStateEnter()
     {
         Debug.Log("OnStateEnter: " + state);
-        GlowScreen();
+        //GlowScreen();
     }
 
     public void OnStateUpdate()

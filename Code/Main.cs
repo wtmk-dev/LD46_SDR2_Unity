@@ -30,6 +30,10 @@ public class Main : MonoBehaviour
     private List<Button> spellBtns;
     [SerializeField]
     private List<GameObject> highScoreUI;
+    [SerializeField]
+    private List<AudioClip> trackLists;
+    private SoundManager soundManager;
+    private AudioSource audioSource;
 
     private Dictionary<State, IState> stateHandeler;
 
@@ -43,6 +47,8 @@ public class Main : MonoBehaviour
         //allocate & fetch
         DOTween.Init(true,true).SetCapacity(200, 10);
 
+        audioSource = GetComponent<AudioSource>();
+
         GameObject stageClone = Instantiate(stagePrefab);
         stageController = stageClone.GetComponent<Stage>();
         stageView = stageUI.GetComponent<StageView>();
@@ -51,25 +57,21 @@ public class Main : MonoBehaviour
         boardController = board.GetComponent<Board>();
         boardController.Init();
 
-        startButton.onClick.AddListener(StartGame);
+        //soundManager = new SoundManager(trackLists, audioSource, start);
 
         //Init
         InitStateHandeler();
         RegisterStateHandeler();
     }
 
+    void Start()
+    {
+        //currentState.StateChange();
+    }
+
     void Update()
     {
         stateHandeler[currentState].OnStateUpdate();
-    }
-
-
-    private void StartGame()
-    {
-        titleScreen.DOFade(0, 1.8f);
-        startButton.image.DOFade(.3f, 3f);
-        title.SetActive(false);
-        currentState.StateChange();
     }
 
     private void InitStateHandeler()
@@ -103,7 +105,7 @@ public class Main : MonoBehaviour
 
     private void OnStateChange(State state)
     {
-        Debug.Log("State Change to: " + state + " from" + currentState);
+        Debug.Log("State Change to: " + state + " from " + currentState);
         //Rework.. OnStateExit to retrun bool then check for compleation to move thought states
         stateHandeler[currentState].OnStateExit();
 

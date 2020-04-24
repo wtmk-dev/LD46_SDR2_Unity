@@ -13,3 +13,4 @@ MonoBehaviour:
   m_Name: Init
   m_EditorClassIdentifier: 
   NextState: {fileID: 11400000, guid: 9d6f1b9ff8147c947a1fe04eadf5b657, type: 2}
+  ID: Init

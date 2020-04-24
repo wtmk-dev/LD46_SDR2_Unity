@@ -10,20 +10,22 @@ public class StartState : IState
     private State state;
     private Player player;
     private Button startButton;
+    private SoundManager soundManager;
 
     public StartState(State state, Player player, Button startButton)
     {
         this.state = state;
         this.player = player;
         this.startButton = startButton;
+        //this.soundManager = soundManager;
 
-        startButton.onClick.AddListener(NewGame);
+        startButton.onClick.AddListener(StartGame);
     }
 
     public void OnStateEnter()
     {
-        
         Debug.Log("OnStateEnter: " + state);
+        
     }
 
     public void OnStateUpdate()
@@ -45,12 +47,11 @@ public class StartState : IState
         }
     }
 
-    private void NewGame()
+    private void StartGame()
     {
-        player.InitNewGame();
         Debug.Log("New Game");
+        player.InitNewGame();
 
-        //Debug :: 
         state.StateChange();
     }
 }
