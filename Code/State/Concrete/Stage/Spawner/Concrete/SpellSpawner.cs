@@ -56,6 +56,7 @@ public class SpellSpawner : MonoBehaviour
 
     public void Kill(GameObject clone)
     {
+        Debug.Log(clone);
         clone.SetActive(false);
         spellPool.Enqueue(clone);
     }

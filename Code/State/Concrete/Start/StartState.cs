@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using DG.Tweening;
 
 public class StartState : IState
 {
@@ -11,21 +12,35 @@ public class StartState : IState
     private Player player;
     private Button startButton;
     private SoundManager soundManager;
+    private StartView startView;
+    private AudioSource audioSource;
+    private AudioClip clip;
 
-    public StartState(State state, Player player, Button startButton)
+    public StartState(State state, Player player, StartView startView, AudioSource audioSource, AudioClip clip)
     {
         this.state = state;
         this.player = player;
-        this.startButton = startButton;
+        this.startView = startView;
+        this.audioSource = audioSource;
+        this.clip = clip;
         //this.soundManager = soundManager;
-
-        startButton.onClick.AddListener(StartGame);
     }
 
     public void OnStateEnter()
     {
         Debug.Log("OnStateEnter: " + state);
-        
+        startView.SetText("start", "<shake>Super Despair Shooter");
+        startView.SetActive("story", false);
+        startView.SetActive("pew", false);
+
+        startView.GetButton("story").onClick.AddListener(InitModeStory);
+        startView.GetButton("pew").onClick.AddListener(InitModePew);
+        startView.GetButton("choice").onClick.AddListener(Uncover);
+
+        audioSource.clip = clip;
+        audioSource.loop = true;
+        audioSource.Play();
+        audioSource.DOFade(0.3f, 0.3f);
     }
 
     public void OnStateUpdate()
@@ -35,8 +50,19 @@ public class StartState : IState
 
     public void OnStateExit()
     {
-        startButton.gameObject.SetActive(false);
         Debug.Log("OnStateExit: " + state);
+
+        //startView.SetText("start", "<shake>Super Despair Shooter");
+
+        startView.SetActive("story", false);
+        startView.SetActive("pew", false);
+        startView.SetActive("title", false);
+        startView.SetActive("st", false);
+
+        startView.FadeObject("bg", 3f);
+        startView.FadeObject("fg", 3f);
+
+        audioSource.DOFade(0f, 0.3f);
     }
 
     public void StateChange()
@@ -47,11 +73,32 @@ public class StartState : IState
         }
     }
 
-    private void StartGame()
+    private void Uncover()
     {
-        Debug.Log("New Game");
-        player.InitNewGame();
+        Debug.Log("uncover");
+        startView.GetButton("choice").gameObject.transform.DOMoveY(-150f,.936f);
 
+        startView.SetActive("pew", true);
+
+        Image pew = startView.GetButton("pew").gameObject.GetComponent<Image>();
+        var color = pew.color;
+        color.a = 0f;
+        pew.color = color;
+        pew.DOFade(1f, .336f);
+    }
+
+    private void InitModeStory()
+    {
+        Debug.Log("Mode: Story..."); 
+        //player.InitNewGame();
+
+        //state.StateChange();
+    }
+
+    private void InitModePew()
+    {
+        Debug.Log("Mode: Endless...");
+        player.InitNewGame();
         state.StateChange();
     }
 }

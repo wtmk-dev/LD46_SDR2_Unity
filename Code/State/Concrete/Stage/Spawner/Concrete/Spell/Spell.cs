@@ -56,7 +56,8 @@ public class Spell : MonoBehaviour
 
     void Update()
     {
-        if(gameObject.transform.position.y > 7.5f)
+        Debug.Log(gameObject.transform.position.y);
+        if(gameObject.transform.position.y >= 4f)
         {
             spawner.Kill(gameObject);
         }

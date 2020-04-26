@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using DG.Tweening;
 
 public class StageState : IState
 {
@@ -16,8 +17,11 @@ public class StageState : IState
     private List<MobModel> mobs;
     private BadsModel bads;
     private List<Button> spells;
+    private AudioSource audioSource;
+    private AudioClip clip;
 
-    public StageState(State state, Player player, Stage stage, StageView view, List<MobModel> mobs, BadsModel bads, List<Button> spells)
+
+    public StageState(State state, Player player, Stage stage, StageView view, List<MobModel> mobs, BadsModel bads, List<Button> spells, AudioSource audioSource, AudioClip clip)
     {
         this.mobs = new List<MobModel>();
 
@@ -28,7 +32,8 @@ public class StageState : IState
         this.mobs = mobs;
         this.bads = bads;
         this.spells = spells;
-
+        this.audioSource = audioSource;
+        this.clip = clip;
         
         
         spells[0].onClick.AddListener(() => Fire(0));
@@ -48,12 +53,26 @@ public class StageState : IState
     {
         Debug.Log("OnStateEnter: " + state);
 
+        audioSource.clip = clip;
+        audioSource.loop = true;
+        audioSource.Play();
+        audioSource.DOFade(0.3f, 0.8f);
+
         Register();
+
+        var saveData = PlayerPrefs.HasKey("score");
+
+        if(!saveData)
+        {
+            int score = 0;
+            PlayerPrefs.SetInt("score", score);
+            PlayerPrefs.Save();
+        }
 
         if(goPlayer == null)
         {
-            goPlayer = stage.Init(player,view);
-            goPlayer.transform.position = player.startingPos;
+           goPlayer = stage.Init(player,view);
+           goPlayer.transform.position = player.startingPos;
         }
 
         if(playerController == null)
@@ -73,12 +92,15 @@ public class StageState : IState
 
     public void OnStateUpdate() 
     {
+        Debug.Log("OnStateUpdate " + state);
+        BindKeys();
         GameOver();
         view.UpdateHopeMeter(player.Hope);
     }
 
     public void OnStateExit() 
     {
+        Debug.Log("OnStateExit: " + state);
         view.Hide();
         Unregister();
         stage.Reset();
@@ -95,6 +117,29 @@ public class StageState : IState
         bads.OnScored += OnBadsScored;
     }
 
+    private void BindKeys()
+    {
+        if(Input.GetKeyDown(KeyCode.A))
+        {
+            Fire(0);
+        }
+
+        if (Input.GetKeyDown(KeyCode.S))
+        {
+            Fire(1);
+        }
+
+        if (Input.GetKeyDown(KeyCode.D))
+        {
+            Fire(2);
+        }
+
+        if (Input.GetKeyDown(KeyCode.F))
+        {
+            Fire(3);
+        }
+    }
+    
     private void Unregister()
     {
         foreach (MobModel mob in mobs)

@@ -18,7 +18,8 @@ public class Main : MonoBehaviour
     [SerializeField]
     private Player player;
     [SerializeField]
-    private GameObject title, stagePrefab, stageUI, board, gameOverText, resetButton, endgameBg;
+    private GameObject title, stagePrefab, stageUI, board, gameOverText, resetButton, endgameBg, goStartView;
+    private StartView startView;
     private Stage stageController;
     private StageView stageView;
     private Board boardController;
@@ -32,7 +33,6 @@ public class Main : MonoBehaviour
     private List<GameObject> highScoreUI;
     [SerializeField]
     private List<AudioClip> trackLists;
-    private SoundManager soundManager;
     private AudioSource audioSource;
 
     private Dictionary<State, IState> stateHandeler;
@@ -49,6 +49,9 @@ public class Main : MonoBehaviour
 
         audioSource = GetComponent<AudioSource>();
 
+        startView = goStartView.GetComponent<StartView>();
+        startView.Init();
+
         GameObject stageClone = Instantiate(stagePrefab);
         stageController = stageClone.GetComponent<Stage>();
         stageView = stageUI.GetComponent<StageView>();
@@ -57,16 +60,21 @@ public class Main : MonoBehaviour
         boardController = board.GetComponent<Board>();
         boardController.Init();
 
-        //soundManager = new SoundManager(trackLists, audioSource, start);
-
         //Init
         InitStateHandeler();
         RegisterStateHandeler();
+
+        audioSource.clip = trackLists[0];
+        audioSource.loop = true;
+
+        currentState.StateChange();
+        
     }
 
     void Start()
     {
         //currentState.StateChange();
+       
     }
 
     void Update()
@@ -80,8 +88,8 @@ public class Main : MonoBehaviour
         stateHandeler = new Dictionary<State, IState>();
 
         stateHandeler.Add(init, new InitState(init, background) );
-        stateHandeler.Add(start, new StartState(start,player,startButton) );
-        stateHandeler.Add(stage, new StageState(stage, player, stageController, stageView, mobs, bads, spellBtns));
+        stateHandeler.Add(start, new StartState(start,player,startView, audioSource, trackLists[0]) );
+        stateHandeler.Add(stage, new StageState(stage, player, stageController, stageView, mobs, bads, spellBtns, audioSource, trackLists[1]));
         stateHandeler.Add(end,  new EndState(end,player, gameOverText, resetButton, endgameBg, highScoreUI) );
 
         stateHandeler[currentState].OnStateEnter();
