@@ -35,11 +35,10 @@ public class StageState : IState
         this.audioSource = audioSource;
         this.clip = clip;
         
-        
-        spells[0].onClick.AddListener(() => Fire(0));
-        spells[1].onClick.AddListener(() => Fire(1));
-        spells[2].onClick.AddListener(() => Fire(2));
-        spells[3].onClick.AddListener(() => Fire(3));
+        //spells[0].onClick.AddListener(() => Fire(0));
+        //spells[1].onClick.AddListener(() => Fire(1));
+        //spells[2].onClick.AddListener(() => Fire(2));
+        //spells[3].onClick.AddListener(() => Fire(3));
     }
 
     public void StateChange() 
@@ -72,19 +71,18 @@ public class StageState : IState
         if(goPlayer == null)
         {
            goPlayer = stage.Init(player,view);
-           goPlayer.transform.position = player.startingPos;
         }
 
         if(playerController == null)
         {
             playerController = goPlayer.GetComponent<PlayerController>();
-            playerController.Init(player);
+            playerController.Init(player, stage.GetSpellSpawnPoints());
         }
 
         view.SetHopeMeterActive();
         view.SetSpellSlotActive();
         view.SetHudActive();
-        view.SetScoreText("<slide>" +player.Score);
+        view.SetScoreText("<slide>" + player.Score);
         view.SetNarratorText("Ready?");
 
         stage.StartLevel(4f); 
@@ -95,15 +93,17 @@ public class StageState : IState
         Debug.Log("OnStateUpdate " + state);
         BindKeys();
         GameOver();
-        view.UpdateHopeMeter(player.Hope);
+        view.UpdateHopeMeter((int)player.Hope);
+        view.UpdateScore(player.Score);
     }
 
     public void OnStateExit() 
     {
         Debug.Log("OnStateExit: " + state);
         view.Hide();
-        Unregister();
         stage.Reset();
+
+        Unregister();
     }
 
     private void Register()
@@ -122,21 +122,19 @@ public class StageState : IState
         if(Input.GetKeyDown(KeyCode.A))
         {
             Fire(0);
-        }
-
-        if (Input.GetKeyDown(KeyCode.S))
+        }else if (Input.GetKeyDown(KeyCode.S))
         {
             Fire(1);
-        }
-
-        if (Input.GetKeyDown(KeyCode.D))
+        }else if (Input.GetKeyDown(KeyCode.D))
         {
             Fire(2);
-        }
-
-        if (Input.GetKeyDown(KeyCode.F))
+        }else if (Input.GetKeyDown(KeyCode.F))
         {
             Fire(3);
+        }else if(Input.GetKeyDown(KeyCode.Space))
+        {
+            Debug.Log("Space");
+            RechargeMana();
         }
     }
     
@@ -171,6 +169,15 @@ public class StageState : IState
     private void Fire(int loc)
     {
         playerController.Fire(loc);
+    }
+
+    private void RechargeMana()
+    {
+        Debug.Log(player.Score);
+        if(player.Score > 0)
+        {
+            player.ManaTap();
+        }
     }
 
     private void GameOver()

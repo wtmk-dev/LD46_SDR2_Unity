@@ -12,18 +12,14 @@ public class Player : ScriptableObject
     public float Despair;
     public float Hope;
 
-    public Vector2 startingPos;
-
     public bool isWinner = false;
 
-    
     public void InitNewGame()
     {
         Score = 0;
         Despair = 0;
         Hope = 27;
         Level = 1;
-        startingPos = new Vector2(0.5f, -3.5f);
         isWinner = false;
     }
 
@@ -53,5 +49,11 @@ public class Player : ScriptableObject
     public float GetFade()
     {
         return Hope / 1000;
+    }
+
+    public void ManaTap()
+    {
+        Score = Score / 2;
+        Hope = Hope + 27 * Level;
     }
 }

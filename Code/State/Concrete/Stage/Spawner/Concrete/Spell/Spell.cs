@@ -43,7 +43,7 @@ public class Spell : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D col)
     {
-        Debug.Log(col);
+        //Debug.Log(col);
         Mob mob = col.gameObject.GetComponent<Mob>();
 
         if(mob == null)
@@ -56,7 +56,7 @@ public class Spell : MonoBehaviour
 
     void Update()
     {
-        Debug.Log(gameObject.transform.position.y);
+        //Debug.Log(gameObject.transform.position.y);
         if(gameObject.transform.position.y >= 4f)
         {
             spawner.Kill(gameObject);

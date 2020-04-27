@@ -48,7 +48,7 @@ public class StartView : MonoBehaviour
 
     public void SetActive(string key, bool isActive)
     {
-        Debug.Log("set active " + key);
+       // Debug.Log("set active " + key);
         switch (key.ToLower())
         {
             case "story":
@@ -75,8 +75,8 @@ public class StartView : MonoBehaviour
 
     public void FadeObject(string key, float time)
     {
-        Debug.Log(gameObjectMap.Count);
-        Debug.Log("fade object: " + key);
+        //Debug.Log(gameObjectMap.Count);
+        //Debug.Log("fade object: " + key);
         Image img = gameObjectMap[key].GetComponent<Image>();
 
         img.DOFade(0, time);

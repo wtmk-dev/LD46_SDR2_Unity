@@ -17,6 +17,7 @@ public class StageView : MonoBehaviour
     private TextAnimatorPlayer hopeTextAnim, narratorTextAnim, scoreTextAnim;
 
     private int currentHope;
+    private int currentScore;
 
     public void Init()
     {
@@ -34,6 +35,8 @@ public class StageView : MonoBehaviour
         hudImage = hud.GetComponent<Image>();
 
         currentHope = 0;
+        currentScore = 0;
+
         hopeMeter.SetActive(false);
         hopeText.SetActive(false);
         spellSlot.SetActive(false);
@@ -85,24 +88,47 @@ public class StageView : MonoBehaviour
     public void SetNarratorText(string text)
     {
         narrator.SetActive(true);
-        narratorTextAnim.ShowText("<wiggle>" + text);
+        narratorTextAnim.ShowText(text);
     }
 
-    public void UpdateHopeMeter(float amount)
+    public void LoadHopeMeter(int amount)
+    {
+        Debug.Log(amount);
+        Debug.Log(currentHope);
+
+        currentHope += amount;
+        Debug.Log(amount);
+        Debug.Log(currentHope);
+        UpdateHopeMeter(currentHope);
+    }
+
+    public void UpdateHopeMeter(int amount)
     {
         UpdateImageFill(hopeMeterImage, amount);
         UpdateHopeText(amount);
     }
 
-    private void UpdateHopeText(float amount)
+    private void UpdateHopeText(int amount)
     {
-        int ch = (int)amount;
+        int ch = amount;
 
         if(currentHope != ch)
         {
             currentHope = ch;
             string hope = ch + "";
             hopeTextAnim.ShowText(hope);
+        }
+    }
+
+    public void UpdateScore(int amount)
+    {
+        int ch = amount;
+
+        if (currentScore != ch)
+        {
+            currentScore = ch;
+            string score = ch + "";
+            scoreTextAnim.ShowText(score);
         }
     }
 

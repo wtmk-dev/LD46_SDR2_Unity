@@ -5,15 +5,15 @@ using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
 {
-    [SerializeField]
     private List<GameObject> spellSpawnPoints;
     private SpellSpawner spellSpawner;
     private Player player;
 
     public bool canCast = false;
 
-    public void Init(Player player)
+    public void Init(Player player,List<GameObject> spellSpwanPoints)
     {
+        this.spellSpawnPoints = spellSpwanPoints;
         this.player = player;
         spellSpawner = GetComponent<SpellSpawner>();
         spellSpawner.Allocate(500, spellSpawnPoints);
@@ -27,6 +27,8 @@ public class PlayerController : MonoBehaviour
             {
                 return;
             }
+
+            canCast = false;
 
             player.Hope -= 1;
             spellSpawner.Spawn(loc);

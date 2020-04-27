@@ -18,6 +18,8 @@ public class Stage : MonoBehaviour
     private SpellModel spellModel;
     [SerializeField]
     private Bark bark;
+    [SerializeField]
+    private List<GameObject> spellSpawnPoints;
 
     private float spawnTime = 10f;
     private bool isSpawning = false;
@@ -47,13 +49,12 @@ public class Stage : MonoBehaviour
         this.view = view;
         this.player = player;
 
-        if (goPlayer == null)
+        if( playerController == null )
         {
-            goPlayer = Instantiate(player.Prefab);
-            playerController = goPlayer.GetComponent<PlayerController>();
+            playerController = palyerPrefab.GetComponent<PlayerController>();
         }
 
-        return goPlayer;
+        return palyerPrefab;
     }
 
     public void MoveDesiparMete(float to, float durration)
@@ -96,12 +97,17 @@ public class Stage : MonoBehaviour
         badsTimer = BadsTimer();
         isbadsTimeRunning = true;
 
-        StartCoroutine(badsTimer);
+        //StartCoroutine(badsTimer);
     }
 
     public void Reset()
     {
         StopAllCoroutines();
+    }
+
+    public List<GameObject> GetSpellSpawnPoints()
+    {
+        return spellSpawnPoints;
     }
 
     private IEnumerator SpawnTimer()
