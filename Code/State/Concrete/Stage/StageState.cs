@@ -12,6 +12,7 @@ public class StageState : IState
     private Player player;
     private Stage stage;
     private StageView view;
+    private ShopView shopView;
     private PlayerController playerController;
     private GameObject goPlayer;
     private List<MobModel> mobs;
@@ -21,7 +22,7 @@ public class StageState : IState
     private AudioClip clip;
 
 
-    public StageState(State state, Player player, Stage stage, StageView view, List<MobModel> mobs, BadsModel bads, List<Button> spells, AudioSource audioSource, AudioClip clip)
+    public StageState(State state, Player player, Stage stage, StageView view, ShopView shopView, List<MobModel> mobs, BadsModel bads, List<Button> spells, AudioSource audioSource, AudioClip clip)
     {
         this.mobs = new List<MobModel>();
 
@@ -29,6 +30,7 @@ public class StageState : IState
         this.player = player;
         this.stage = stage;
         this.view = view;
+        this.shopView = shopView;
         this.mobs = mobs;
         this.bads = bads;
         this.spells = spells;
@@ -133,7 +135,7 @@ public class StageState : IState
             Fire(3);
         }else if(Input.GetKeyDown(KeyCode.Space))
         {
-            Debug.Log("Space");
+            //Debug.Log("Space");
             RechargeMana();
         }
     }
@@ -173,7 +175,7 @@ public class StageState : IState
 
     private void RechargeMana()
     {
-        Debug.Log(player.Score);
+        //Debug.Log(player.Score);
         if(player.Score > 0)
         {
             player.ManaTap();

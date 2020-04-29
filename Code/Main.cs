@@ -18,11 +18,12 @@ public class Main : MonoBehaviour
     [SerializeField]
     private Player player;
     [SerializeField]
-    private GameObject title, stagePrefab, stageUI, board, gameOverText, resetButton, endgameBg, goStartView;
+    private GameObject title, stagePrefab, stageUI, board, gameOverText, resetButton, endgameBg, goStartView, goShopView;
     private StartView startView;
     private Stage stageController;
     private StageView stageView;
     private Board boardController;
+    private ShopView shopView;
     [SerializeField]
     private List<MobModel> mobs;
     [SerializeField]
@@ -60,6 +61,9 @@ public class Main : MonoBehaviour
         boardController = board.GetComponent<Board>();
         boardController.Init();
 
+        shopView = goShopView.GetComponent<ShopView>();
+        goShopView.SetActive(false); // remove
+
         //Init
         InitStateHandeler();
         RegisterStateHandeler();
@@ -89,7 +93,7 @@ public class Main : MonoBehaviour
 
         stateHandeler.Add(init, new InitState(init, background) );
         stateHandeler.Add(start, new StartState(start,player,startView, audioSource, trackLists[0]) );
-        stateHandeler.Add(stage, new StageState(stage, player, stageController, stageView, mobs, bads, spellBtns, audioSource, trackLists[1]));
+        stateHandeler.Add(stage, new StageState(stage, player, stageController, stageView,shopView, mobs, bads, spellBtns, audioSource, trackLists[1]));
         stateHandeler.Add(end,  new EndState(end,player, gameOverText, resetButton, endgameBg, highScoreUI) );
 
         stateHandeler[currentState].OnStateEnter();

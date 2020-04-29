@@ -75,7 +75,7 @@ public class StartState : IState
 
     private void Uncover()
     {
-        Debug.Log("uncover");
+        //Debug.Log("uncover");
         startView.GetButton("choice").gameObject.transform.DOMoveY(-150f,.936f);
 
         startView.SetActive("pew", true);
@@ -91,7 +91,6 @@ public class StartState : IState
     {
         Debug.Log("Mode: Story..."); 
         //player.InitNewGame();
-
         //state.StateChange();
     }
 

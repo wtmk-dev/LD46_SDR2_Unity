@@ -7,8 +7,11 @@ using UnityEngine;
 public class SpellModel : ScriptableObject
 {
     public Action<MobModel> OnScore;
-    public float Speed;
-    public int damage = 1;
+    public Action<int> OnHit;
+
+    public float speed;
+    public int damage;
+    public int power;
 
     public void Score(MobModel mob)
     {
@@ -18,9 +21,12 @@ public class SpellModel : ScriptableObject
         }
     }
 
-    public void Init()
+    public void Hit(int dmg)
     {
-        damage = 1;
+        if(OnHit != null)
+        {
+            OnHit(dmg);
+        }
     }
 
 }

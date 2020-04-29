@@ -61,7 +61,7 @@ public class StartView : MonoBehaviour
                 title.SetActive(isActive);
                 break;
             case "st":
-                Debug.Log("hide title");
+                //Debug.Log("hide title");
                subTitle.SetActive(isActive);
                 break;
         }
@@ -69,7 +69,7 @@ public class StartView : MonoBehaviour
 
     public Button GetButton(string key)
     {
-        Debug.Log("get button: " + key);
+        //Debug.Log("get button: " + key);
         return buttonMap[key];
     }
 

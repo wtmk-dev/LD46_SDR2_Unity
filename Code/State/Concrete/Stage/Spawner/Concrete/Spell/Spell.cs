@@ -15,6 +15,10 @@ public class Spell : MonoBehaviour
     private SpellSpawner spawner;
     private SpellModel model;
 
+    private float currentSpeed;
+    private int currentDamage;
+    private int currentPower;
+
     public void Init(SpellModel model, SpellSpawner spawner)
     {
         if (random == null)
@@ -25,7 +29,9 @@ public class Spell : MonoBehaviour
         spriteRenderer = GetComponent<SpriteRenderer>();
         this.spawner = spawner;
         this.model = model;
-        model.Init();
+        currentSpeed = model.speed;
+        currentDamage = model.damage;
+        currentPower = model.power;
     }
 
     public void SetActive()
@@ -33,12 +39,16 @@ public class Spell : MonoBehaviour
         sprite = sprites[random.Next(sprites.Count)];
         spriteRenderer.sprite = sprite;
 
+        currentSpeed = model.speed;
+        currentDamage = model.damage;
+        currentPower = model.power;
+
         Move();
     }
 
     private void Move()
     {
-        gameObject.transform.DOLocalMoveY(10, model.Speed);
+        gameObject.transform.DOLocalMoveY(10, currentSpeed);
     }
 
     void OnTriggerEnter2D(Collider2D col)
@@ -52,12 +62,20 @@ public class Spell : MonoBehaviour
         }
 
         mob.Damage(model.damage);
+
+        currentPower--;
     }
 
     void Update()
     {
         //Debug.Log(gameObject.transform.position.y);
         if(gameObject.transform.position.y >= 4f)
+        {
+            model.Hit(currentDamage); 
+            spawner.Kill(gameObject);
+        }
+
+        if(currentPower < 0)
         {
             spawner.Kill(gameObject);
         }

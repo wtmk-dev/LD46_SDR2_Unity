@@ -12,4 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f903a73674d64c3478591bee3caedd34, type: 3}
   m_Name: Spell_0
   m_EditorClassIdentifier: 
-  Speed: 3
+  speed: 17
+  damage: 2
+  power: 0

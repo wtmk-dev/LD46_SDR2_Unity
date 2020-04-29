@@ -71,7 +71,7 @@ public class MobSpawner : MonoBehaviour
             RegisterSummonTile(st);
         }
 
-        Debug.Log(spawnPointAnimations.Count);
+        //Debug.Log(spawnPointAnimations.Count);
     }
 
     public void Spawn(int a)
