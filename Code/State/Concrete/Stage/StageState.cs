@@ -55,7 +55,7 @@ public class StageState : IState
         Debug.Log("OnStateEnter: " + state);
 
         audioSource.clip = clip;
-        audioSource.loop = true;
+        audioSource.loop = false;
         audioSource.Play();
         audioSource.DOFade(0.3f, 0.8f);
 

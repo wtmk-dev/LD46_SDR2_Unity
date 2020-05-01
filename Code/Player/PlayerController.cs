@@ -16,7 +16,7 @@ public class PlayerController : MonoBehaviour
         this.spellSpawnPoints = spellSpwanPoints;
         this.player = player;
         spellSpawner = GetComponent<SpellSpawner>();
-        spellSpawner.Allocate(500, spellSpawnPoints);
+        spellSpawner.Allocate(250, spellSpawnPoints);
     }
 
     public void Fire(int loc)

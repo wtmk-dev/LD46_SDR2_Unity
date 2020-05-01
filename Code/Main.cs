@@ -38,6 +38,8 @@ public class Main : MonoBehaviour
 
     private Dictionary<State, IState> stateHandeler;
 
+    private AudioSpectrum audioSpectrum;
+
     void OnDisable()
     {
         UnregisterStateHandeler();
@@ -72,7 +74,8 @@ public class Main : MonoBehaviour
         audioSource.loop = true;
 
         currentState.StateChange();
-        
+
+        audioSpectrum = new AudioSpectrum(128);
     }
 
     void Start()
@@ -83,6 +86,7 @@ public class Main : MonoBehaviour
 
     void Update()
     {
+        audioSpectrum.AudioUpdate();
         stateHandeler[currentState].OnStateUpdate();
     }
 

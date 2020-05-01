@@ -26,7 +26,7 @@ public class MobSpawner : MonoBehaviour
 
     private void OnDisable()
     {
-       if(summonTiles.Count < 1)
+       if(summonTiles == null)
         {
             return;
         }
@@ -74,7 +74,7 @@ public class MobSpawner : MonoBehaviour
         //Debug.Log(spawnPointAnimations.Count);
     }
 
-    public void Spawn(int a)
+    public void Spawn(int a, float timeToBeat)
     {
         for (int i = 0; i < a; i++)
         {
@@ -85,7 +85,7 @@ public class MobSpawner : MonoBehaviour
 
             clone.transform.position = spawnPoints[index].transform.position;
 
-            runner.transform.DOMove(runnerSlidePoints[index].transform.position, 0.3f);
+            runner.transform.DOMove(runnerSlidePoints[index].transform.position, timeToBeat);
 
             spawnPointAnimations[index].SetInteger("sp", 1);
 

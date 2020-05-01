@@ -26,7 +26,7 @@ public class SpellSpawner : MonoBehaviour
 
     private void OnDisable()
     {
-        if (castTile.Count < 1)
+        if (castTile == null)
         {
             return;
         }

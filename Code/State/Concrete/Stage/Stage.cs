@@ -21,6 +21,8 @@ public class Stage : MonoBehaviour
     [SerializeField]
     private List<GameObject> spellSpawnPoints;
 
+    private AudioSyncSpawn audioSync;
+
     private float spawnTime = 10f;
     private bool isSpawning = false;
     private IEnumerator spawnTimer;
@@ -34,14 +36,24 @@ public class Stage : MonoBehaviour
     private IEnumerator badsTimer;
 
     private bool isStoryMode = false;
+    private bool isActive = false;
 
     void Awake()
     {
         badsSpawner = BadsSpawner.GetComponent<BadsSpawner>();
-        badsSpawner.Allocate(500);
+        badsSpawner.Allocate(5);
 
         mobSpawner = MobSpawner.GetComponent<MobSpawner>();
-        mobSpawner.Allocate(500);
+        mobSpawner.Allocate(250);
+    }
+
+    private void Update()
+    {
+        if(isActive)
+        {
+            audioSync.OnUpdate();
+        }
+        
     }
 
     public GameObject Init(Player player, StageView view)
@@ -53,6 +65,9 @@ public class Stage : MonoBehaviour
         {
             playerController = palyerPrefab.GetComponent<PlayerController>();
         }
+
+        audioSync = new AudioSyncSpawn(25f,1f,1.3f,2f);
+        audioSync.OnBeatBroadcast += Spawn;
 
         return palyerPrefab;
     }
@@ -112,26 +127,10 @@ public class Stage : MonoBehaviour
 
     private IEnumerator SpawnTimer()
     {
-        float time = 6f;
-        float maxTime = 6f;
-        while (isSpawning)
+        while(audioSync.IsOnBeat)
         {
-            yield return new WaitForSeconds(time);
-
-            view.SetNarratorText( bark.GetRandomBark() );
-            time -= 0.3f;
-            if(time < .7f && !isStoryMode)
-            {
-                time = maxTime;
-                player.Level++;
-                if(player.Level > 5)
-                {
-                    player.Level = 5;
-                }
-                view.SetNarratorText("<fade> Level UP: ... " + player.Level);
-                spellModel.damage = player.Level;
-            }
-            mobSpawner.Spawn(player.Level);
+            yield return new WaitForSeconds(audioSync.timeToBeat);
+            mobSpawner.Spawn(1,audioSync.timeToBeat);
         }
     }
 
@@ -139,11 +138,23 @@ public class Stage : MonoBehaviour
     {
         yield return new WaitForSeconds(time);
         view.SetNarratorText("");
-        StartSpawning();
-        SpawnBads();
+        //StartSpawning();
+        //SpawnBads();
         MoveDesiparMete(player.Despair, 2.7f);
         view.SetSpellSlotActive();
         playerController.canCast = true;
+        isActive = true;
+        //StartCoroutine("ScaleTimeToBeat");
+    }
+
+    private IEnumerator ScaleTimeToBeat()
+    {
+        while(audioSync.timeToBeat > 1.1f)
+        {
+            audioSync.timeToBeat -= 0.03f;
+            //Debug.Log(audioSync.timeToBeat);
+            yield return new WaitForSeconds(0.03f);
+        }
     }
 
     private IEnumerator BadsTimer()
@@ -194,6 +205,14 @@ public class Stage : MonoBehaviour
         if (player.Hope < 25)
         {
             player.Despair -= 0.01f;
+        }
+    }
+
+    private void Spawn(bool isBeat)
+    {
+        if(isBeat)
+        {
+            StartSpawning();
         }
     }
 
