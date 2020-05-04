@@ -20,6 +20,9 @@ public class StageState : IState
     private List<Button> spells;
     private AudioSource audioSource;
     private AudioClip clip;
+    private Dictionary<string, Button> btnDict;
+
+    private bool isShopping = false;
 
 
     public StageState(State state, Player player, Stage stage, StageView view, ShopView shopView, List<MobModel> mobs, BadsModel bads, List<Button> spells, AudioSource audioSource, AudioClip clip)
@@ -36,11 +39,29 @@ public class StageState : IState
         this.spells = spells;
         this.audioSource = audioSource;
         this.clip = clip;
-        
-        //spells[0].onClick.AddListener(() => Fire(0));
-        //spells[1].onClick.AddListener(() => Fire(1));
-        //spells[2].onClick.AddListener(() => Fire(2));
-        //spells[3].onClick.AddListener(() => Fire(3));
+
+        isShopping = false;
+        btnDict = new Dictionary<string, Button>();
+
+        btnDict.Add("ok",shopView.GetButton("ok"));
+        btnDict["ok"].onClick.AddListener(() => StartShopping());
+
+        btnDict.Add("no", shopView.GetButton("no"));
+        btnDict["no"].onClick.AddListener(() => StopShopping());
+
+        btnDict.Add("p", shopView.GetButton("p"));
+        btnDict["p"].onClick.AddListener(() => PowerUp());
+
+        btnDict.Add("d", shopView.GetButton("d"));
+        btnDict["d"].onClick.AddListener(() => DamageUp());
+
+        btnDict.Add("c", shopView.GetButton("c"));
+        btnDict["c"].onClick.AddListener(() => ChargeUp());
+
+        btnDict.Add("s", shopView.GetButton("s"));
+        btnDict["s"].onClick.AddListener(() => SpeedUp());
+
+        shopView.Hide();
     }
 
     public void StateChange() 
@@ -72,7 +93,7 @@ public class StageState : IState
 
         if(goPlayer == null)
         {
-           goPlayer = stage.Init(player,view);
+           goPlayer = stage.Init(player,view,shopView);
         }
 
         if(playerController == null)
@@ -89,16 +110,23 @@ public class StageState : IState
 
         stage.StartLevel(4f); 
     }
-
     public void OnStateUpdate() 
     {
-        Debug.Log("OnStateUpdate " + state);
+        Debug.Log("OnStateUpdate: " + state);
+
         BindKeys();
         GameOver();
         view.UpdateHopeMeter((int)player.Hope);
         view.UpdateScore(player.Score);
-    }
 
+        if(!audioSource.isPlaying)
+        {
+            if(!isShopping)
+            {
+                TransitionLevel();
+            }
+        }
+    }
     public void OnStateExit() 
     {
         Debug.Log("OnStateExit: " + state);
@@ -110,7 +138,7 @@ public class StageState : IState
 
     private void Register()
     {
-       foreach(MobModel mob in mobs)
+        foreach(MobModel mob in mobs)
         {
             mob.OnMobScored += OnMobScored;
             mob.OnMobKiled  += OnMobKilled;
@@ -121,22 +149,34 @@ public class StageState : IState
 
     private void BindKeys()
     {
-        if(Input.GetKeyDown(KeyCode.A))
+        if(!isShopping)
         {
-            Fire(0);
-        }else if (Input.GetKeyDown(KeyCode.S))
+            if (Input.GetKeyDown(KeyCode.A))
+            {
+                Fire(0);
+            }
+            else if (Input.GetKeyDown(KeyCode.S))
+            {
+                Fire(1);
+            }
+            else if (Input.GetKeyDown(KeyCode.D))
+            {
+                Fire(2);
+            }
+            else if (Input.GetKeyDown(KeyCode.F))
+            {
+                Fire(3);
+            }
+            else if (Input.GetKeyDown(KeyCode.Space))
+            {
+                //Debug.Log("Space");
+                RechargeMana(true);
+            }
+        }
+     
+        if(Input.GetKeyUp(KeyCode.Space))
         {
-            Fire(1);
-        }else if (Input.GetKeyDown(KeyCode.D))
-        {
-            Fire(2);
-        }else if (Input.GetKeyDown(KeyCode.F))
-        {
-            Fire(3);
-        }else if(Input.GetKeyDown(KeyCode.Space))
-        {
-            //Debug.Log("Space");
-            RechargeMana();
+            RechargeMana(false);
         }
     }
     
@@ -158,8 +198,9 @@ public class StageState : IState
 
     private void OnMobKilled(int pts)
     {
-        player.Score += pts * player.Level * 1000;
+        player.Score += pts * 1000;
         player.Despair += 0.007f;
+
         view.SetScoreText("<rainb>" + player.Score);
     }
 
@@ -173,13 +214,13 @@ public class StageState : IState
         playerController.Fire(loc);
     }
 
-    private void RechargeMana()
+    private void RechargeMana(bool isActive)
     {
         //Debug.Log(player.Score);
-        if(player.Score > 0)
+        if(isActive)
         {
             player.ManaTap();
-        }
+        } else { }
     }
 
     private void GameOver()
@@ -199,5 +240,75 @@ public class StageState : IState
         }
     }
 
-    
+    private void TransitionLevel()
+    {
+        isShopping = true;
+        stage.PrepNextRound();
+        view.PrepNextRound();
+        shopView.Show();
+    }
+
+    private void StartShopping()
+    {
+        shopView.ShowText("You can spend your score to upgrade. When you upgrade your spell cost more tho so.. idk im bad at this kinda stuff.");
+        shopView.StartShopping();
+    }
+
+    private void StopShopping()
+    {
+
+    }
+
+    private void PowerUp()
+    {
+        if(player.Score >= player.Cost())
+        {
+            player.Score -= player.Cost();
+
+            player.LevelUp();
+            stage.LevelUp("p");
+        }
+        else { shopView.ShowText("not enought score <shake>player</shake> ... Kay?"); }
+    }
+
+    private void DamageUp()
+    {
+        Debug.Log("d");
+        if (player.Score >= player.Cost())
+        {
+            player.Score -= player.Cost();
+
+            player.LevelUp();
+            stage.LevelUp("d");
+           
+        }else { shopView.ShowText("not enought score <shake>player</shake> ... Kay?"); }
+    }
+
+    private void ChargeUp()
+    {
+        Debug.Log("c");
+        if (player.Score >= player.Cost())
+        {
+            player.Score -= player.Cost();
+
+            player.LevelUp();
+            stage.LevelUp("c");
+        }
+        else { shopView.ShowText("not enought score <shake>player</shake> ... Kay?"); }
+    }
+
+    private void SpeedUp()
+    {
+        Debug.Log("s");
+        if (player.Score >= player.Cost())
+        {
+            player.Score -= player.Cost();
+
+            player.LevelUp();
+            stage.LevelUp("s");
+        }
+        else { shopView.ShowText("not enought score <shake>player</shake> ... Kay?"); }
+    }
+
+
 }

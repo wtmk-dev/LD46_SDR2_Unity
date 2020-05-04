@@ -132,6 +132,11 @@ public class StageView : MonoBehaviour
         }
     }
 
+    public void PrepNextRound()
+    {
+        StopAllCoroutines();
+    }
+
     private void UpdateImageFill(Image img, float amount)
     {
         img.fillAmount = amount / 100;

@@ -58,8 +58,8 @@ public class StartState : IState
         startView.SetActive("pew", false);
         startView.SetActive("title", false);
         startView.SetActive("st", false);
-
-        startView.FadeObject("bg", 3f);
+         
+        startView.GetGameObject("bg").GetComponent<Image>().DOFade(0f, 3f).OnComplete( () => HideView() );
         startView.FadeObject("fg", 3f);
 
         audioSource.DOFade(0f, 0.3f);
@@ -85,6 +85,11 @@ public class StartState : IState
         color.a = 0f;
         pew.color = color;
         pew.DOFade(1f, .336f);
+    }
+
+    private void HideView()
+    {
+        startView.SetActive("self", false);
     }
 
     private void InitModeStory()

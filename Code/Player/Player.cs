@@ -7,7 +7,8 @@ public class Player : ScriptableObject
 {
     public GameObject Prefab;
     public int Score;
-    public int Level;
+    private int Level;
+    private int Exp;
 
     public float Despair;
     public float Hope;
@@ -20,6 +21,7 @@ public class Player : ScriptableObject
         Despair = 0;
         Hope = 27;
         Level = 1;
+        Exp = 0;
         isWinner = false;
     }
 
@@ -55,5 +57,26 @@ public class Player : ScriptableObject
     {
         Score = Score / 2;
         Hope = Hope + 27 * Level;
+    }
+
+    public int Cost()
+    {
+        return 9000 * Level;
+    }
+
+    public int GetLevel()
+    {
+        return Level;
+    }
+
+    public void LevelUp()
+    {
+        Exp++;
+
+        if(Exp == 2)
+        {
+            Exp = 0;
+            Level++;
+        }
     }
 }

@@ -14,6 +14,7 @@ public class MobSpawner : MonoBehaviour
     private List<MobModel> mobModels;
     private Queue<GameObject> mobPool;
     private Queue<GameObject> spawnQueue;
+    private List<GameObject> spawned;
 
     [SerializeField]
     private List<GameObject> spawnPoints;
@@ -42,6 +43,7 @@ public class MobSpawner : MonoBehaviour
         spawnPointAnimations = new List<Animator>();
         summonTiles = new List<SummonTile>();
         spawnQueue = new Queue<GameObject>();
+        spawned = new List<GameObject>();
 
         spawner = GetComponent<MobSpawner>();
 
@@ -91,23 +93,46 @@ public class MobSpawner : MonoBehaviour
 
             clone.SetActive(false);
             spawnQueue.Enqueue(clone);
-            
+
+            spawned.Add(clone);
         }
             
     }
 
     private void OnSpawned(bool isSpawn)
     {
-        GameObject clone = spawnQueue.Dequeue();
-        clone.SetActive(true);
-        Mob mob = clone.GetComponent<Mob>();
-        mob.SetActive(mobModels[random.Next(mobModels.Count)]);
+        try
+        {
+            GameObject clone = spawnQueue.Dequeue();
+            clone.SetActive(true);
+            Mob mob = clone.GetComponent<Mob>();
+            mob.SetActive(mobModels[random.Next(mobModels.Count)]);
+        }
+        catch { Debug.Log("Not spawn"); }
+        
     }
 
     public void Kill(GameObject clone)
     {
         clone.SetActive(false);
         mobPool.Enqueue(clone);
+    }
+
+    public void KillAll()
+    {
+        foreach(GameObject go in spawnQueue)
+        {
+            go.SetActive(false);
+        }
+
+        spawnQueue.Clear();
+
+        foreach (GameObject go in spawned)
+        {
+            go.SetActive(false);
+        }
+
+        spawned.Clear();
     }
 
     private void RegisterSummonTile(SummonTile tile)

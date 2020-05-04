@@ -75,7 +75,7 @@ public class Spell : MonoBehaviour
             spawner.Kill(gameObject);
         }
 
-        if(currentPower < 0)
+        if(currentPower < 1)
         {
             spawner.Kill(gameObject);
         }

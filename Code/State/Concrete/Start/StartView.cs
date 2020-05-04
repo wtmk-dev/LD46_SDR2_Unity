@@ -64,6 +64,9 @@ public class StartView : MonoBehaviour
                 //Debug.Log("hide title");
                subTitle.SetActive(isActive);
                 break;
+            case "self":
+                gameObject.SetActive(false);
+                break;
         }
     }
 
@@ -71,6 +74,12 @@ public class StartView : MonoBehaviour
     {
         //Debug.Log("get button: " + key);
         return buttonMap[key];
+    }
+
+    public GameObject GetGameObject(string key)
+    {
+        //Debug.Log("get button: " + key);
+        return gameObjectMap[key];
     }
 
     public void FadeObject(string key, float time)

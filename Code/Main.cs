@@ -64,7 +64,8 @@ public class Main : MonoBehaviour
         boardController.Init();
 
         shopView = goShopView.GetComponent<ShopView>();
-        goShopView.SetActive(false); // remove
+        shopView.Init();
+        
 
         //Init
         InitStateHandeler();
@@ -81,7 +82,6 @@ public class Main : MonoBehaviour
     void Start()
     {
         //currentState.StateChange();
-       
     }
 
     void Update()

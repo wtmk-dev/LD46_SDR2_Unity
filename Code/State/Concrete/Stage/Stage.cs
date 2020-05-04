@@ -13,6 +13,7 @@ public class Stage : MonoBehaviour
     private BadsSpawner badsSpawner;
     private MobSpawner mobSpawner;
     private StageView view;
+    private ShopView shop;
     private PlayerController playerController;
     [SerializeField]
     private SpellModel spellModel;
@@ -56,10 +57,34 @@ public class Stage : MonoBehaviour
         
     }
 
-    public GameObject Init(Player player, StageView view)
+    public void LevelUp(string key)
     {
+        switch(key)
+        {
+            case "p":
+                spellModel.power += 1;
+                shop.PowerUpdate("Power: " + spellModel.power);
+                break;
+            case "d":
+                spellModel.damage += 1;
+                shop.DamageUpdate("Damage: " + spellModel.damage);
+                break;
+            case "s":
+                spellModel.speedLevel += 1;
+                shop.SpeedUpdate("Speed: " + spellModel.speedLevel);
+                break;
+            default:
+                break;
+        }
+    }
+
+    public GameObject Init(Player player, StageView view, ShopView shop)
+    {
+        spellModel.NewSpell();
+
         this.view = view;
         this.player = player;
+        this.shop = shop;
 
         if( playerController == null )
         {
@@ -100,6 +125,12 @@ public class Stage : MonoBehaviour
         isSpawning = true;
 
         StartCoroutine(spawnTimer);
+    }
+
+    public void PrepNextRound()
+    {
+        StopAllCoroutines();
+        mobSpawner.KillAll();
     }
 
     private void SpawnBads()
