@@ -15,6 +15,9 @@ public class Player : ScriptableObject
 
     public bool isWinner = false;
 
+    [HideInInspector]
+    public SpellModel spell;
+
     public void InitNewGame()
     {
         Score = 0;

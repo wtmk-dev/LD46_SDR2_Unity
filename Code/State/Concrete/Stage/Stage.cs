@@ -21,6 +21,7 @@ public class Stage : MonoBehaviour
     private Bark bark;
     [SerializeField]
     private List<GameObject> spellSpawnPoints;
+    private Animator cameraAnimator;
 
     private AudioSyncSpawn audioSync;
 
@@ -39,6 +40,8 @@ public class Stage : MonoBehaviour
     private bool isStoryMode = false;
     private bool isActive = false;
 
+    private int currentRound = 0;
+
     void Awake()
     {
         badsSpawner = BadsSpawner.GetComponent<BadsSpawner>();
@@ -46,6 +49,8 @@ public class Stage : MonoBehaviour
 
         mobSpawner = MobSpawner.GetComponent<MobSpawner>();
         mobSpawner.Allocate(250);
+
+        currentRound = 0;
     }
 
     private void Update()
@@ -73,18 +78,28 @@ public class Stage : MonoBehaviour
                 spellModel.speedLevel += 1;
                 shop.SpeedUpdate("Speed: " + spellModel.speedLevel);
                 break;
+            case "c":
+                spellModel.charge += 1;
+                shop.ChargeUpdate("Charge: " + spellModel.charge);
+                break;
             default:
                 break;
         }
     }
 
-    public GameObject Init(Player player, StageView view, ShopView shop)
+    public GameObject Init(Player player, StageView view, ShopView shop, Animator cameraAnimator, EffectSounds effectSounds)
     {
         spellModel.NewSpell();
 
         this.view = view;
         this.player = player;
         this.shop = shop;
+        this.player.spell = spellModel;
+        this.cameraAnimator = cameraAnimator;
+        mobSpawner.SetCameraAnimator(cameraAnimator);
+        mobSpawner.SetEffectSounds(effectSounds);
+
+        spellModel.OnHit += ScoreHit;
 
         if( playerController == null )
         {
@@ -95,6 +110,13 @@ public class Stage : MonoBehaviour
         audioSync.OnBeatBroadcast += Spawn;
 
         return palyerPrefab;
+    }
+
+    private void ScoreHit(int pwr)
+    {
+        player.Despair += (float) pwr * 0.01f;
+        Debug.Log(player.Despair);
+        MoveDesiparMete(player.Despair, 0.3f);
     }
 
     public void MoveDesiparMete(float to, float durration)
@@ -129,6 +151,7 @@ public class Stage : MonoBehaviour
 
     public void PrepNextRound()
     {
+        currentRound++;
         StopAllCoroutines();
         mobSpawner.KillAll();
     }
@@ -161,7 +184,7 @@ public class Stage : MonoBehaviour
         while(audioSync.IsOnBeat)
         {
             yield return new WaitForSeconds(audioSync.timeToBeat);
-            mobSpawner.Spawn(1,audioSync.timeToBeat);
+            mobSpawner.Spawn(1,audioSync.timeToBeat, currentRound);
         }
     }
 

@@ -35,6 +35,10 @@ public class Main : MonoBehaviour
     [SerializeField]
     private List<AudioClip> trackLists;
     private AudioSource audioSource;
+    [SerializeField]
+    private GameObject goCamera;
+    [SerializeField]
+    private EffectSounds effectSounds;
 
     private Dictionary<State, IState> stateHandeler;
 
@@ -96,8 +100,9 @@ public class Main : MonoBehaviour
         stateHandeler = new Dictionary<State, IState>();
 
         stateHandeler.Add(init, new InitState(init, background) );
-        stateHandeler.Add(start, new StartState(start,player,startView, audioSource, trackLists[0]) );
-        stateHandeler.Add(stage, new StageState(stage, player, stageController, stageView,shopView, mobs, bads, spellBtns, audioSource, trackLists[1]));
+        stateHandeler.Add(start, new StartState(start,player,startView, audioSource, trackLists[0], effectSounds));
+        trackLists.RemoveAt(0);
+        stateHandeler.Add(stage, new StageState(stage, player, stageController, stageView,shopView, mobs, bads, spellBtns, audioSource, trackLists, goCamera.GetComponent<Animator>(),effectSounds));
         stateHandeler.Add(end,  new EndState(end,player, gameOverText, resetButton, endgameBg, highScoreUI) );
 
         stateHandeler[currentState].OnStateEnter();

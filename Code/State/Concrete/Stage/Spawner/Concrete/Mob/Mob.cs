@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
@@ -8,6 +9,9 @@ public class Mob : MonoBehaviour
 {
     [SerializeField]
     private TextAnimatorPlayer dmgTextAnim;
+    [SerializeField]
+    private GameObject psPrefab, psgo;
+    private ParticleSystem ps;
     private MobModel model;
     private SpriteRenderer spriteRenderer;
     private MobSpawner spawner;
@@ -17,17 +21,26 @@ public class Mob : MonoBehaviour
 
     private bool hasScored = false;
 
+    private System.Random rand;
+
+    private int currnetRound;
+
     public void Init(MobSpawner spawner)
     {
+        rand = new System.Random();
         this.spawner = spawner;
         this.spriteRenderer = GetComponent<SpriteRenderer>();
+        psgo = Instantiate(psPrefab);
+        ps = psgo.GetComponent<ParticleSystem>();
     }
 
-    public void SetActive(MobModel model)
+    public void SetActive(MobModel model, int round)
     {
+        currnetRound = round;
+        int bonus = rand.Next(0,round);
         this.model = model;
         spriteRenderer.sprite = model.Sprite;
-        BLOOD = model.Blood;
+        BLOOD = model.Blood + bonus;
         blood = BLOOD;
         hasScored = false;
 
@@ -44,8 +57,11 @@ public class Mob : MonoBehaviour
     {
         if(blood < 0)
         {
-            model.OnMobKiled(model.Value);
-            spawner.Kill(gameObject);
+            psgo.transform.position = gameObject.transform.position;
+            ps.Play();
+            int bonus = rand.Next(0, currnetRound);
+            model.OnMobKiled(model.Value + bonus);
+            spawner.Kill(gameObject, false);
         }
     }
 
@@ -57,7 +73,7 @@ public class Mob : MonoBehaviour
             {
                 hasScored = true;
                 model.MobScored();
-                spawner.Kill(gameObject);
+                spawner.Kill(gameObject,true);
             }
         }    
     }

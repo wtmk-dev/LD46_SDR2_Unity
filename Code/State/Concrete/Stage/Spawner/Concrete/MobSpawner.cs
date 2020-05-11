@@ -24,6 +24,10 @@ public class MobSpawner : MonoBehaviour
     private List<GameObject> runnerSlidePoints;
 
     private MobSpawner spawner;
+    private int currentRound;
+    private Shake shake;
+
+    private EffectSounds effectSounds;
 
     private void OnDisable()
     {
@@ -36,6 +40,17 @@ public class MobSpawner : MonoBehaviour
         {
             UnregisterSummonTile(st);
         }
+    }
+
+    public void SetCameraAnimator(Animator cameraAnimator)
+    {
+        shake = GetComponent<Shake>();
+        shake.Init(cameraAnimator);
+    }
+
+    public void SetEffectSounds(EffectSounds effectSounds)
+    {
+        this.effectSounds = effectSounds;
     }
 
     public void Allocate(int amount)
@@ -76,8 +91,9 @@ public class MobSpawner : MonoBehaviour
         //Debug.Log(spawnPointAnimations.Count);
     }
 
-    public void Spawn(int a, float timeToBeat)
+    public void Spawn(int a, float timeToBeat, int round)
     {
+        currentRound = round;
         for (int i = 0; i < a; i++)
         {
             GameObject clone = mobPool.Dequeue();
@@ -106,16 +122,22 @@ public class MobSpawner : MonoBehaviour
             GameObject clone = spawnQueue.Dequeue();
             clone.SetActive(true);
             Mob mob = clone.GetComponent<Mob>();
-            mob.SetActive(mobModels[random.Next(mobModels.Count)]);
+            mob.SetActive(mobModels[random.Next(mobModels.Count)], currentRound);
         }
         catch { Debug.Log("Not spawn"); }
         
     }
 
-    public void Kill(GameObject clone)
+    public void Kill(GameObject clone, bool isShake)
     {
         clone.SetActive(false);
         mobPool.Enqueue(clone);
+
+        if(isShake)
+        {
+            effectSounds.Play("mobScored");
+            shake.CameraShake();
+        } else { effectSounds.Play("mobKilled");  }
     }
 
     public void KillAll()

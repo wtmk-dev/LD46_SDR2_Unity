@@ -19,10 +19,14 @@ public class SpellSpawner : MonoBehaviour
     private List<Animator> animators;
     private Dictionary<Vector3, Animator> animatorDict;
     private SpellSpawner spawner;
+    private Shake shake;
+    private Animator cameraAnimator;
     
     private List<SummonTile> castTile;
 
     private PlayerController playerController;
+
+    private EffectSounds effectSounds;
 
     private void OnDisable()
     {
@@ -75,6 +79,20 @@ public class SpellSpawner : MonoBehaviour
         }
     }
 
+    public void SetCameraAnimator(Animator cameraAnimator)
+    {
+        this.cameraAnimator = cameraAnimator;
+        shake = GetComponent<Shake>();
+        shake.Init(cameraAnimator);
+    }
+
+    public void SetEffectSounds(EffectSounds effectSounds)
+    {
+        this.effectSounds = effectSounds;
+
+    }
+
+
     public void Spawn(int loc)
     {
         if(animators[loc].GetInteger("sp") > 0)
@@ -96,11 +114,17 @@ public class SpellSpawner : MonoBehaviour
         clone.SetActive(false);
     }
 
-    public void Kill(GameObject clone)
+    public void Kill(GameObject clone, bool isShake)
     {
         //Debug.Log(clone);
         clone.SetActive(false);
         spellPool.Enqueue(clone);
+
+        if(isShake)
+        {
+            shake.ShakeUp();
+        }
+        
     }
 
     private void OnSpawned(bool spawned)
@@ -109,6 +133,7 @@ public class SpellSpawner : MonoBehaviour
         clone.SetActive(true);
         Spell mob = clone.GetComponent<Spell>();
         playerController.canCast = true;
+        effectSounds.Play("spell");
         mob.SetActive();
     }
 

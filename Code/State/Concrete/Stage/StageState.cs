@@ -19,15 +19,21 @@ public class StageState : IState
     private BadsModel bads;
     private List<Button> spells;
     private AudioSource audioSource;
-    private AudioClip clip;
+    private List<AudioClip> trackList;
     private Dictionary<string, Button> btnDict;
+    private Animator camAnim;
+    private EffectSounds effectSounds;
 
     private bool isShopping = false;
 
+    private int currentTrack = 0;
 
-    public StageState(State state, Player player, Stage stage, StageView view, ShopView shopView, List<MobModel> mobs, BadsModel bads, List<Button> spells, AudioSource audioSource, AudioClip clip)
+
+    public StageState(State state, Player player, Stage stage, StageView view, ShopView shopView, List<MobModel> mobs, 
+        BadsModel bads, List<Button> spells, AudioSource audioSource, List<AudioClip> trackList, Animator camAnim, EffectSounds effectSounds)
     {
         this.mobs = new List<MobModel>();
+        this.effectSounds = effectSounds;
 
         this.state = state;
         this.player = player;
@@ -38,7 +44,10 @@ public class StageState : IState
         this.bads = bads;
         this.spells = spells;
         this.audioSource = audioSource;
-        this.clip = clip;
+        this.trackList = trackList;
+        this.camAnim = camAnim;
+
+        currentTrack = 0;
 
         isShopping = false;
         btnDict = new Dictionary<string, Button>();
@@ -75,7 +84,7 @@ public class StageState : IState
     {
         Debug.Log("OnStateEnter: " + state);
 
-        audioSource.clip = clip;
+        audioSource.clip = trackList[currentTrack];
         audioSource.loop = false;
         audioSource.Play();
         audioSource.DOFade(0.3f, 0.8f);
@@ -93,13 +102,13 @@ public class StageState : IState
 
         if(goPlayer == null)
         {
-           goPlayer = stage.Init(player,view,shopView);
+           goPlayer = stage.Init(player,view,shopView, camAnim, effectSounds);
         }
 
         if(playerController == null)
         {
             playerController = goPlayer.GetComponent<PlayerController>();
-            playerController.Init(player, stage.GetSpellSpawnPoints());
+            playerController.Init(player, stage.GetSpellSpawnPoints(),camAnim, effectSounds);
         }
 
         view.SetHopeMeterActive();
@@ -199,7 +208,8 @@ public class StageState : IState
     private void OnMobKilled(int pts)
     {
         player.Score += pts * 1000;
-        player.Despair += 0.007f;
+        player.Despair += (float) player.GetLevel() * 0.01f;
+        player.Hope += player.spell.charge;
 
         view.SetScoreText("<rainb>" + player.Score);
     }
@@ -256,7 +266,19 @@ public class StageState : IState
 
     private void StopShopping()
     {
+        currentTrack++;
 
+        if(currentTrack > trackList.Count - 1)
+        {
+            currentTrack = 0;
+        }
+
+        AudioClip clip = trackList[currentTrack];
+
+        audioSource.clip = clip;
+        audioSource.Play();
+        isShopping = false;
+        shopView.Hide();
     }
 
     private void PowerUp()
@@ -268,7 +290,10 @@ public class StageState : IState
             player.LevelUp();
             stage.LevelUp("p");
         }
-        else { shopView.ShowText("not enought score <shake>player</shake> ... Kay?"); }
+        else { 
+            shopView.ShowText("not enought score <shake>player</shake> ... Kay?");
+            shopView.ExitTextUpdate("Exit");
+        }
     }
 
     private void DamageUp()
@@ -281,7 +306,10 @@ public class StageState : IState
             player.LevelUp();
             stage.LevelUp("d");
            
-        }else { shopView.ShowText("not enought score <shake>player</shake> ... Kay?"); }
+        }else { 
+            shopView.ShowText("not enought score <shake>player</shake> ... Kay?");
+            shopView.ExitTextUpdate("Exit");
+        }
     }
 
     private void ChargeUp()
@@ -294,7 +322,10 @@ public class StageState : IState
             player.LevelUp();
             stage.LevelUp("c");
         }
-        else { shopView.ShowText("not enought score <shake>player</shake> ... Kay?"); }
+        else { 
+            shopView.ShowText("not enought score <shake>player</shake> ... Kay?");
+            shopView.ExitTextUpdate("Exit");
+        }
     }
 
     private void SpeedUp()
@@ -307,7 +338,10 @@ public class StageState : IState
             player.LevelUp();
             stage.LevelUp("s");
         }
-        else { shopView.ShowText("not enought score <shake>player</shake> ... Kay?"); }
+        else { 
+            shopView.ShowText("not enought score <shake>player</shake> ... Kay?");
+            shopView.ExitTextUpdate("Exit");
+        }
     }
 
 

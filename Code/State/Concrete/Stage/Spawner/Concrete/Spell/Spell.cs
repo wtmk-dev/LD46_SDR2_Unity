@@ -9,6 +9,10 @@ public class Spell : MonoBehaviour
 
     [SerializeField]
     private List<Sprite> sprites;
+    [SerializeField]
+    private GameObject damgePSPrefab;
+    private GameObject goDamagePS;
+    private ParticleSystem damagePS;
     private Sprite sprite;
     private SpriteRenderer spriteRenderer;
 
@@ -18,6 +22,7 @@ public class Spell : MonoBehaviour
     private float currentSpeed;
     private int currentDamage;
     private int currentPower;
+    private int currentCharge;
 
     public void Init(SpellModel model, SpellSpawner spawner)
     {
@@ -32,6 +37,9 @@ public class Spell : MonoBehaviour
         currentSpeed = model.speed;
         currentDamage = model.damage;
         currentPower = model.power;
+        currentCharge = model.charge;
+        goDamagePS = Instantiate(damgePSPrefab);
+        damagePS = goDamagePS.GetComponent<ParticleSystem>();
     }
 
     public void SetActive()
@@ -42,6 +50,7 @@ public class Spell : MonoBehaviour
         currentSpeed = model.speed;
         currentDamage = model.damage;
         currentPower = model.power;
+        currentCharge = model.charge;
 
         Move();
     }
@@ -62,6 +71,8 @@ public class Spell : MonoBehaviour
         }
 
         mob.Damage(model.damage);
+        goDamagePS.transform.position = gameObject.transform.position;
+        damagePS.Play();
 
         currentPower--;
     }
@@ -71,13 +82,13 @@ public class Spell : MonoBehaviour
         //Debug.Log(gameObject.transform.position.y);
         if(gameObject.transform.position.y >= 4f)
         {
-            model.Hit(currentDamage); 
-            spawner.Kill(gameObject);
+            model.Hit(currentPower); 
+            spawner.Kill(gameObject, true);
         }
 
         if(currentPower < 1)
         {
-            spawner.Kill(gameObject);
+            spawner.Kill(gameObject, false);
         }
     }
 }

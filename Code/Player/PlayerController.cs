@@ -11,12 +11,14 @@ public class PlayerController : MonoBehaviour
 
     public bool canCast = false;
 
-    public void Init(Player player,List<GameObject> spellSpwanPoints)
+    public void Init(Player player,List<GameObject> spellSpwanPoints, Animator cameraAnimator, EffectSounds effectSounds)
     {
         this.spellSpawnPoints = spellSpwanPoints;
         this.player = player;
         spellSpawner = GetComponent<SpellSpawner>();
         spellSpawner.Allocate(250, spellSpawnPoints);
+        spellSpawner.SetCameraAnimator(cameraAnimator);
+        spellSpawner.SetEffectSounds(effectSounds);
     }
 
     public void Fire(int loc)
@@ -30,7 +32,7 @@ public class PlayerController : MonoBehaviour
 
             canCast = false;
 
-            player.Hope -= 1;
+            player.Hope -= player.GetLevel();
             spellSpawner.Spawn(loc);
         }
     }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using JetBrains.Annotations;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -14,6 +15,7 @@ public class SpellModel : ScriptableObject
     public int speedLevel;
     public int damage;
     public int power;
+    public int charge;
 
     public void NewSpell()
     {
@@ -21,6 +23,7 @@ public class SpellModel : ScriptableObject
         damage = 1;
         power = 1;
         speedLevel = 1;
+        charge = 1;
     }
 
     public void Score(MobModel mob)

@@ -15,14 +15,16 @@ public class StartState : IState
     private StartView startView;
     private AudioSource audioSource;
     private AudioClip clip;
+    private EffectSounds effectSounds;
 
-    public StartState(State state, Player player, StartView startView, AudioSource audioSource, AudioClip clip)
+    public StartState(State state, Player player, StartView startView, AudioSource audioSource, AudioClip clip, EffectSounds effectSounds)
     {
         this.state = state;
         this.player = player;
         this.startView = startView;
         this.audioSource = audioSource;
         this.clip = clip;
+        this.effectSounds = effectSounds;
         //this.soundManager = soundManager;
     }
 
@@ -101,6 +103,7 @@ public class StartState : IState
 
     private void InitModePew()
     {
+        effectSounds.Play("start");
         Debug.Log("Mode: Endless...");
         player.InitNewGame();
         state.StateChange();

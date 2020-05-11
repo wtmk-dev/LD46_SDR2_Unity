@@ -13,7 +13,7 @@ public class ShopView : MonoBehaviour
     [SerializeField]
     private Image menu;
     [SerializeField]
-    private TextAnimatorPlayer powerTxt, damageTxt, speedTxt, chargeTxt, shopTxt;
+    private TextAnimatorPlayer powerTxt, damageTxt, speedTxt, chargeTxt, shopTxt, exitShopTxt;
     private SpellModel spellModel;
     private Player playerModel;
 
@@ -93,6 +93,11 @@ public class ShopView : MonoBehaviour
     public void DamageUpdate(string txt)
     {
         damageTxt.ShowText(txt);
+    }
+
+    public void ExitTextUpdate(string txt)
+    {
+        exitShopTxt.ShowText(txt);
     }
 
     public void StartShopping()

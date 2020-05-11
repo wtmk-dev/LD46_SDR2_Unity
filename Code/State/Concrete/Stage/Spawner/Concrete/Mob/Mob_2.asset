@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Mob_2
   m_EditorClassIdentifier: 
   Sprite: {fileID: 21300000, guid: b24d5fe30e848fa4580adc01dd32afb8, type: 3}
-  Blood: 1
-  Value: 9
+  Blood: 0
+  Value: 3
   Speed: 15
   score: -0.4
